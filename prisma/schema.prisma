@@ -12,3 +12,34 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id            String         @id @default(nanoid())
+  username      String         @unique
+  password      String
+  googleId      String?        @unique
+  isOpenToGuide Boolean        @default(false)
+  rating        Float?
+  numRatings    Int?
+  Blog          Blog[]
+  PlansOffered  PlansOffered[]
+}
+
+model Blog {
+  id       String @id @default(nanoid())
+  title    String
+  text     String
+  imageURL String
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+  likes    Int
+}
+
+model PlansOffered {
+  id       String @id @default(nanoid())
+  title    String
+  price    Int
+  location String
+  guide    User   @relation(fields: [userId], references: [id])
+  userId   String
+}
