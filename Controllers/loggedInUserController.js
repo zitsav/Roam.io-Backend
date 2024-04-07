@@ -147,5 +147,6 @@ module.exports = {
   getUserProfile,
   getUserGuidedTours,
   getSingleTour,
-  paymentURLGeneration
+  paymentURLGeneration,
+  writeAReview
 }
