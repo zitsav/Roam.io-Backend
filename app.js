@@ -6,6 +6,8 @@ const http = require('http');
 const { Server } = require('socket.io');
 const chatRoutes = require('./Router/chatRouter');
 const blogRouter = require('./Router/blogRouter')
+const creatorRouter = require('./Router/creatorRouter')
+const userRouter = require('./Router/userRouter')
 const cors = require('cors');
 
 const app = express();
@@ -29,6 +31,8 @@ app.use(express.urlencoded({ extended : false}))
 app.use('/auth', authRoutes);
 app.use('/blog',blogRouter)
 app.use('/api', chatRoutes);
+app.use('/creator',creatorRouter)
+app.use('/user',userRouter)
 
 io.on('connection', (socket) => {
   console.log('A user connected');
