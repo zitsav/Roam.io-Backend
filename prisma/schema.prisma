@@ -18,10 +18,11 @@ model User {
   firstName     String
   lastName      String
   password      String
+  email         String         @unique
   googleId      String?        @unique
   isOpenToGuide Boolean        @default(false)
-  rating        Float?
-  numRatings    Int?
+  rating        Float?         @default(0)
+  numRatings    Int            @default(0)
   Blog          Blog[]
   PlansOffered  PlansOffered[]
 }

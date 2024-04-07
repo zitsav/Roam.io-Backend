@@ -6,17 +6,18 @@ const bcrypt = require('bcrypt');
 
 const prisma = new PrismaClient();
 
-// Local strategy for username/password authentication
-passport.use(new LocalStrategy(async (username, password, done) => {
+passport.use(new LocalStrategy(async (email, password, done) => {
   try {
-    const user = await prisma.user.findUnique({ where: { email: username } });
+    const user = await prisma.user.findUnique({ where: { email: email } });
+
     if (!user) {
-      return done(null, false, { message: 'Incorrect username or password' });
+      return done(null, false, { message: 'Incorrect email or password' });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
+
     if (!passwordMatch) {
-      return done(null, false, { message: 'Incorrect username or password' });
+      return done(null, false, { message: 'Incorrect email or password' });
     }
 
     return done(null, user);

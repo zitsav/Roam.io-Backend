@@ -9,7 +9,6 @@ async function registerGoogleUserController(req, res, next) {
   try {
     const { googleId, firstName, lastName, email } = req.user;
 
-    // Check if the user already exists in the database
     const existingUser = await prisma.user.findUnique({
       where: { googleId }
     });
@@ -18,7 +17,6 @@ async function registerGoogleUserController(req, res, next) {
       return res.status(409).send(`User with Google ID ${googleId} already exists`);
     }
 
-    // Create a new user using Google OAuth data
     const newUser = await prisma.user.create({
       data: {
         firstName,
@@ -50,7 +48,7 @@ async function registerLocalUserController(req, res, next) {
     }
 
     const existingUserByEmail = await prisma.user.findUnique({
-      where: { email }
+      where: { email: email }
     });
 
     if (existingUserByEmail) {

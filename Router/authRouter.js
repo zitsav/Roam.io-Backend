@@ -2,12 +2,13 @@ const express = require('express');
 const passport = require('../config/passport');
 const router = express.Router();
 const {
-  registerGoogleUserController,
   registerLocalUserController,
   loginLocal,
-  loginGoogle,
   handleGoogleCallback
 } = require('../Controllers/authController');
+
+
+router.post('/register/local', registerLocalUserController);
 
 router.get('/register/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
@@ -16,8 +17,6 @@ router.get('/google/callback', passport.authenticate('google', { failureRedirect
 router.post('/login/local', loginLocal);
 
 router.get('/login/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-router.get('/register/local', registerLocalUserController);
 
 router.get('/test', (req, res) => {
   res.send(`
