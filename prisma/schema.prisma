@@ -21,10 +21,12 @@ model User {
   password      String?
   googleId      String?        @unique
   isOpenToGuide Boolean        @default(false)
-  rating        Float?
-  numRatings    Int?
+  rating        Float?         @default(0)
+  numRatings    Int?           @default(0)
   Blog          Blog[]
   PlansOffered  PlansOffered[]
+  messagesSent    Message[]    @relation("MessageSender")
+  messagesReceived Message[]   @relation("MessageReceiver")
 }
 
 model Blog {
@@ -52,4 +54,14 @@ model Image {
   caption  String
   Blog     Blog?   @relation(fields: [blogId], references: [id])
   blogId   String?
+}
+
+model Message {
+  id         String  @id @default(nanoid())
+  text       String
+  sender     User     @relation("MessageSender", fields: [senderId], references: [id])
+  senderId   String
+  receiver   User     @relation("MessageReceiver", fields: [receiverId], references: [id])
+  receiverId String
+  createdAt  DateTime @default(now())
 }

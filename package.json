@@ -9,11 +9,13 @@
     "express-middleware": "^1.1.0",
     "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
-    "pg": "^8.11.5"
+    "pg": "^8.11.5",
+    "socket.io": "^4.7.5"
   },
   "name": "roam.io-backend",
   "version": "1.0.0",
