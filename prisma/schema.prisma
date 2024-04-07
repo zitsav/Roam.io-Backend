@@ -14,29 +14,32 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(nanoid())
-  name          String
-  profilePic    String?
-  email         String         @unique
-  password      String?
-  googleId      String?        @unique
-  isOpenToGuide Boolean        @default(false)
-  rating        Float          @default(0)
-  numRatings    Int            @default(0)
-  Blog          Blog[]
-  PlansOffered  PlansOffered[]
-  messagesSent    Message[]    @relation("MessageSender")
-  messagesReceived Message[]   @relation("MessageReceiver")
+  id               String         @id @default(nanoid())
+  firstName        String
+  lastName         String
+  email            String         @unique
+  password         String?
+  googleId         String?        @unique
+  isOpenToGuide    Boolean        @default(false)
+  rating           Float?         @default(0)
+  numRatings       Int?           @default(0)
+  Blog             Blog[]
+  PlansOffered     PlansOffered[]
+  messagesSent     Message[]      @relation("MessageSender")
+  messagesReceived Message[]      @relation("MessageReceiver")
+  profilePicture String?
 }
 
 model Blog {
-  id       String  @id @default(nanoid())
+  id       String                 @id @default(nanoid())
   title    String
   text     String
   image    Image[]
-  author   User    @relation(fields: [authorId], references: [id])
+  author   User                   @relation(fields: [authorId], references: [id])
   authorId String
-  likes    Int @default(0)
+  likes    Int                    @default(0)
+  hashTags BlogRelationHashtags[]
+  location String
 }
 
 model PlansOffered {
@@ -46,6 +49,7 @@ model PlansOffered {
   location String
   guide    User   @relation(fields: [userId], references: [id])
   userId   String
+  currency String
 }
 
 model Image {
@@ -57,11 +61,25 @@ model Image {
 }
 
 model Message {
-  id         String  @id @default(nanoid())
+  id         String   @id @default(nanoid())
   text       String
   sender     User     @relation("MessageSender", fields: [senderId], references: [id])
   senderId   String
   receiver   User     @relation("MessageReceiver", fields: [receiverId], references: [id])
   receiverId String
   createdAt  DateTime @default(now())
+}
+
+model HashTags {
+  id    String                 @id @default(nanoid())
+  text  String
+  blogs BlogRelationHashtags[]
+}
+
+model BlogRelationHashtags {
+  id        String   @id @default(nanoid())
+  blog      Blog     @relation(fields: [blogId], references: [id])
+  blogId    String
+  hashTag   HashTags @relation(fields: [hashTagId], references: [id])
+  hashTagId String
 }
