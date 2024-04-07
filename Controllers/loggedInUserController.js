@@ -143,9 +143,26 @@ async function writeAReview(req,res){
     }
   })
 }
+async function likeABlog(req,res){
+  const currBlog = prisma.blog.findUnique({
+    where : {
+      id : req.params.id
+    }
+  })
+  await prisma.blog.update({
+    where : {
+      id : req.params.id
+    },
+    data : {
+      likes : currBlog.likes + 1
+    }
+  })
+}
 module.exports = {
   getUserProfile,
   getUserGuidedTours,
   getSingleTour,
-  paymentURLGeneration
+  paymentURLGeneration,
+  writeAReview,
+  likeABlog
 }
