@@ -15,8 +15,7 @@ datasource db {
 
 model User {
   id            String         @id @default(nanoid())
-  firstName     String
-  lastName      String
+  name          String
   profilePic    String?
   email         String         @unique
   password      String?

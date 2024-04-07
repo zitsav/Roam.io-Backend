@@ -16,8 +16,9 @@ passport.use(
       try {
         const { id, name, emails, photos } = profile;
         const googleId = id;
-        const firstName = name.givenName;
-        const lastName = name.familyName;
+        const firstName = name.givenName != null ? name.givenName : "";
+        const lastName = name.familyName != null ? name.familyName : "";
+        const fullName = firstName + " " + lastName;
         const email = emails[0].value;
         const profilePic = photos && photos.length > 0 ? photos[0].value : null; // Get profile picture URL if available
 
@@ -27,10 +28,9 @@ passport.use(
           user = await prisma.user.create({
             data: {
               googleId,
-              firstName,
-              lastName,
+              name: fullName,
               email,
-              profilePic  // Include profilePic in user creation
+              profilePic
             }
           });
         } else {
@@ -65,13 +65,13 @@ function generateToken(user) {
 }
 
 passport.serializeUser((user, done) => {
-  done(null, user); // Serialize the entire user object into the session
+  done(null, user.id); // Serialize the user ID into the session
 });
 
-passport.deserializeUser(async (user, done) => {
+passport.deserializeUser(async (id, done) => {
   try {
-    // Deserialize the entire user object from the session
-    done(null, user);
+    const user = await prisma.user.findUnique({ where: { id } });
+    done(null, user); // Deserialize the user from the ID stored in the session
   } catch (error) {
     done(error);
   }
