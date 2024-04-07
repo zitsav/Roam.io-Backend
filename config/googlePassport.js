@@ -14,11 +14,12 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        const { id, name, emails } = profile;
+        const { id, name, emails, photos } = profile;
         const googleId = id;
         const firstName = name.givenName;
         const lastName = name.familyName;
         const email = emails[0].value;
+        const profilePic = photos && photos.length > 0 ? photos[0].value : null; // Get profile picture URL if available
 
         let user = await prisma.user.findUnique({ where: { googleId } });
 
@@ -28,9 +29,18 @@ passport.use(
               googleId,
               firstName,
               lastName,
-              email
+              email,
+              profilePic  // Include profilePic in user creation
             }
           });
+        } else {
+          // Update profilePic if it's missing or needs to be refreshed
+          if (!user.profilePic && profilePic) {
+            user = await prisma.user.update({
+              where: { id: user.id },
+              data: { profilePic }
+            });
+          }
         }
 
         const token = generateToken(user);

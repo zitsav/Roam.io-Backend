@@ -17,12 +17,13 @@ model User {
   id            String         @id @default(nanoid())
   firstName     String
   lastName      String
+  profilePic    String?
   email         String         @unique
   password      String?
   googleId      String?        @unique
   isOpenToGuide Boolean        @default(false)
-  rating        Float?         @default(0)
-  numRatings    Int?           @default(0)
+  rating        Float          @default(0)
+  numRatings    Int            @default(0)
   Blog          Blog[]
   PlansOffered  PlansOffered[]
   messagesSent    Message[]    @relation("MessageSender")
