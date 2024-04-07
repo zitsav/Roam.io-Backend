@@ -6,18 +6,16 @@ const {
   registerLocalUserController,
   loginLocal,
   loginGoogle,
-  loginGoogleCallback
+  handleGoogleCallback
 } = require('../Controllers/authController');
 
 router.get('/register/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/' }), registerGoogleUserController);
+router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/' }), handleGoogleCallback);
 
 router.post('/login/local', loginLocal);
 
 router.get('/login/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/' }), loginGoogleCallback);
 
 router.get('/register/local', registerLocalUserController);
 

@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 async function registerGoogleUserController(req, res, next) {
   try {
-    const { googleId, firstName, lastName, email } = req.user; // Extracted from Passport.js authentication
+    const { googleId, firstName, lastName, email } = req.user;
 
     // Check if the user already exists in the database
     const existingUser = await prisma.user.findUnique({
@@ -100,7 +100,7 @@ async function loginGoogle(req, res, next) {
   passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
 }
 
-async function loginGoogleCallback(req, res, next) {
+async function handleGoogleCallback(req, res, next) {
   passport.authenticate('google', async (err, user) => {
     try {
       if (err) {
@@ -111,13 +111,26 @@ async function loginGoogleCallback(req, res, next) {
         return res.status(401).send('OAuth authentication failed');
       }
 
-      const token = generateToken(user);
+      const existingUser = await prisma.user.findUnique({
+        where: { googleId: user.googleId }
+      });
 
-      console.log(token);
+      if (!existingUser) {
+        const newUser = await prisma.user.create({
+          data: {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            googleId: user.googleId
+          }
+        });
+      }
+
+      const token = generateToken(user);
 
       res.status(200).send({ token });
     } catch (err) {
-      console.error('Error in loginGoogleCallback:', err);
+      console.error('Error in handleGoogleCallback:', err);
       res.status(500).send('Internal Server Error');
     }
   })(req, res, next);
@@ -138,5 +151,5 @@ module.exports = {
   registerLocalUserController,
   loginLocal,
   loginGoogle,
-  loginGoogleCallback
+  handleGoogleCallback
 };
