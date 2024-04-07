@@ -30,7 +30,7 @@ model Blog {
   id       String @id @default(nanoid())
   title    String
   text     String
-  imageURL String
+  imageURL String[]
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
   likes    Int

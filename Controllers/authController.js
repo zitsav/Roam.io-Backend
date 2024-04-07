@@ -42,6 +42,12 @@ async function registerLocalUserController(req, res, next) {
     if (!email) {
       return res.status(400).send('Email is required');
     }
+    if (!firstName) {
+      return res.status(400).send('Firstname is required');
+    }
+    if (!lastName) {
+      return res.status(400).send('Lastname is required');
+    }
 
     const existingUserByEmail = await prisma.user.findUnique({
       where: { email }
