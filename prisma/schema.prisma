@@ -28,13 +28,13 @@ model User {
 }
 
 model Blog {
-  id       String @id @default(nanoid())
+  id       String  @id @default(nanoid())
   title    String
   text     String
-  imageURL String[]
-  author   User   @relation(fields: [authorId], references: [id])
+  image    Image[]
+  author   User    @relation(fields: [authorId], references: [id])
   authorId String
-  likes    Int
+  likes    Int @default(0)
 }
 
 model PlansOffered {
@@ -44,4 +44,12 @@ model PlansOffered {
   location String
   guide    User   @relation(fields: [userId], references: [id])
   userId   String
+}
+
+model Image {
+  id       String  @id @default(nanoid())
+  imageURL String
+  caption  String
+  Blog     Blog?   @relation(fields: [blogId], references: [id])
+  blogId   String?
 }

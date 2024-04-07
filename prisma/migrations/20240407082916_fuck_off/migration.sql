@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Blog" ALTER COLUMN "likes" DROP NOT NULL,
+ALTER COLUMN "likes" DROP DEFAULT;
