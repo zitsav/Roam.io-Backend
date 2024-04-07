@@ -1,29 +1,29 @@
 const express = require('express');
-const passport = require('../config/passport');
+const passport = require('../config/googlePassport');
 const router = express.Router();
 const {
   registerLocalUserController,
   loginLocal,
+} = require('../Controllers/localAuthController');
+const {
   handleGoogleCallback
-} = require('../Controllers/authController');
+} = require('../Controllers/googleAuthController');
 
 
 router.post('/register/local', registerLocalUserController);
 
-router.get('/register/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/' }), handleGoogleCallback);
+router.get('/google/callback', handleGoogleCallback);
 
 router.post('/login/local', loginLocal);
-
-router.get('/login/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 router.get('/test', (req, res) => {
   res.send(`
     <html>
       <body>
         <h1>Welcome to the Test Page</h1>
-        <p>Click <a href="/auth/login/google">here</a> to register with Google</p>
+        <p>Click <a href="/auth/google">here</a> to log in with Google</p>
       </body>
     </html>
   `);

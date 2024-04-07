@@ -17,12 +17,12 @@ model User {
   id            String         @id @default(nanoid())
   firstName     String
   lastName      String
-  password      String
   email         String         @unique
+  password      String?
   googleId      String?        @unique
   isOpenToGuide Boolean        @default(false)
-  rating        Float?         @default(0)
-  numRatings    Int            @default(0)
+  rating        Float?
+  numRatings    Int?
   Blog          Blog[]
   PlansOffered  PlansOffered[]
 }
