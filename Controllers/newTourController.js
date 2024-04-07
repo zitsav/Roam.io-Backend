@@ -3,7 +3,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function createTour(req, res) {
-  const { title, price, location, userId } = req.body;
+  const { title, price, location, userId,currency } = req.body;
 
   try {
     const newTour = await prisma.plansOffered.create({
@@ -11,10 +11,11 @@ async function createTour(req, res) {
         title,
         price,
         location,
-        userId
+        userId,
+        currency
       }
     });
-    const currUser = await prisma.user.update({
+    await prisma.user.update({
         where : {id : userId},
 
         data : {

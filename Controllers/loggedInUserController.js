@@ -1,5 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 
+require('dotenv').config()
+
 const prisma = new PrismaClient();
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
@@ -46,6 +48,10 @@ async function getUserGuidedTours(req, res) {
         }
       }
     });
+    if(!guidedTours){
+        res.status(404).send('Uh oh the resource does not exist')
+        return
+    }
 
     res.status(200).json({ success: true, guidedTours });
   } catch (error) {
@@ -75,7 +81,34 @@ async function getSingleTour(req,res){
 
 async function paymentURLGeneration(req,res){
     try{
-
+        const tour = await prisma.plansOffered.findUnique({
+            where : {
+                id : req.body.tourId
+            }
+        })
+        if(!tour){
+            res.status(404).send('Tour Not Found')
+            return
+        }
+        const prevArr = [];
+        prevArr.push({
+                price_data: {
+                    currency : tour.currency,
+                    unit_amount : tour.price,
+                    product_data : {
+                        name : tour.title
+                    }
+                },
+                quantity : 1
+            })
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types : ['card'],
+            mode : 'payment',
+            line_items : prevArr,
+            success_url : process.env.SUCCESS_URL,
+            cancel_url : process.env.CANCEL_URL
+        })
+        res.status(200).json({url : session.url})
     }
     catch(err){
         console.log('Error in generating payment url', err.message)
