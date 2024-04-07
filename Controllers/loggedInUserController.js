@@ -115,6 +115,34 @@ async function paymentURLGeneration(req,res){
         res.status(500).send('internal Server Error')
     }
 }
+
+async function writeAReview(req,res){
+  const { rating, text, plansOfferedId } = req.body;
+  const newReview = await prisma.review.create({
+    data : {
+      rating,
+      text,
+      plansOfferedId
+    }
+  })
+  const planOffered = await prisma.plansOffered.findUnique({
+    where : {
+      id : plansOfferedId
+    }
+  }) 
+  let currNumOfReviews = planOffered.totalRatings
+  let newRating = ((planOffered.overallRating*currNumOfReviews) + rating)/(currNumOfReviews+1)
+  currNumOfReviews += 1
+  await prisma.plansOffered.update({
+    where : {
+      id : plansOfferedId
+    },
+    data : {
+      totalRatings : currNumOfReviews,
+      overallRating : newRating
+    }
+  })
+}
 module.exports = {
   getUserProfile,
   getUserGuidedTours,

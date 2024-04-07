@@ -18,15 +18,15 @@ model User {
   name             String
   email            String         @unique
   password         String?
-  googleId         String?        @unique
+  googleId         String        @unique
   isOpenToGuide    Boolean        @default(false)
-  profilePicture   String?
   rating           Float?         @default(0)
   numRatings       Int?           @default(0)
   Blog             Blog[]
   PlansOffered     PlansOffered[]
   messagesSent     Message[]      @relation("MessageSender")
   messagesReceived Message[]      @relation("MessageReceiver")
+  profilePicture   String?
 }
 
 model Blog {
@@ -42,13 +42,16 @@ model Blog {
 }
 
 model PlansOffered {
-  id       String @id @default(nanoid())
-  title    String
-  price    Int
-  location String
-  guide    User   @relation(fields: [userId], references: [id])
-  userId   String
-  currency String
+  id            String   @id @default(nanoid())
+  title         String
+  price         Int
+  location      String
+  guide         User     @relation(fields: [userId], references: [id])
+  userId        String
+  currency      String
+  reviews       Review[]
+  totalRatings  Int      @default(0)
+  overallRating Float    @default(0)
 }
 
 model Image {
@@ -81,4 +84,12 @@ model BlogRelationHashtags {
   blogId    String
   hashTag   HashTags @relation(fields: [hashTagId], references: [id])
   hashTagId String
+}
+
+model Review {
+  id             String        @id @default(nanoid())
+  rating         Int
+  text           String
+  PlansOffered   PlansOffered? @relation(fields: [plansOfferedId], references: [id])
+  plansOfferedId String?
 }
