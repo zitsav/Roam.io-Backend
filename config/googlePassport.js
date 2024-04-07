@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 
 const prisma = new PrismaClient();
 
+// Google OAuth Strategy
 passport.use(
   new GoogleStrategy(
     {
@@ -16,11 +17,11 @@ passport.use(
       try {
         const { id, name, emails, photos } = profile;
         const googleId = id;
-        const firstName = name.givenName != null ? name.givenName : "";
-        const lastName = name.familyName != null ? name.familyName : "";
+        const firstName = name.givenName || "";
+        const lastName = name.familyName || "";
         const fullName = firstName + " " + lastName;
         const email = emails[0].value;
-        const profilePic = photos && photos.length > 0 ? photos[0].value : null; // Get profile picture URL if available
+        const profilePic = photos && photos.length > 0 ? photos[0].value : null;
 
         let user = await prisma.user.findUnique({ where: { googleId } });
 
@@ -30,15 +31,15 @@ passport.use(
               googleId,
               name: fullName,
               email,
-              profilePic
+              profilePicture: profilePic // Use 'profilePicture' instead of 'profilePic'
             }
           });
         } else {
-          // Update profilePic if it's missing or needs to be refreshed
-          if (!user.profilePic && profilePic) {
+          // Update profilePicture if it's missing or needs to be refreshed
+          if (!user.profilePicture && profilePic) {
             user = await prisma.user.update({
               where: { id: user.id },
-              data: { profilePic }
+              data: { profilePicture: profilePic }
             });
           }
         }
